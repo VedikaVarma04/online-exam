@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Online Exam System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 { color: #333; }
+    button {
+      padding: 10px 20px;
+      background: #4CAF50;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover { background: #45a049; }
+    .hidden { display: none; }
+    .question { margin: 15px 0; text-align: left; }
+    input[type="radio"] { margin: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PRE – SAT EXAM</h1>
+
+    <!-- Login -->
+    <div id="loginPage">
+      <h2>Login</h2>
+      <input type="text" id="username" placeholder="Enter your name"><br><br>
+      <button onclick="startExam()">Start Exam</button>
+    </div>
+
+    <!-- Exam -->
+    <div id="examPage" class="hidden">
+      <h2>MCQ Test</h2>
+      <form id="examForm"></form>
+      <button onclick="submitExam()">Submit Exam</button>
+    </div>
+
+    <!-- Result -->
+    <div id="resultPage" class="hidden">
+      <h2>Result</h2>
+      <p id="resultText"></p>
+    </div>
+  </div>
+
+  <script>
+    const questions = {
+      "Maths": [
+        {q: "2 + 2 = ?", options: ["3","4","5"], answer: "4"},
+        {q: "Square root of 16?", options: ["2","4","6"], answer: "4"}
+      ],
+      "Science": [
+        {q: "Water chemical formula?", options: ["H2O","O2","CO2"], answer: "H2O"},
+        {q: "Planet known as Red Planet?", options: ["Earth","Mars","Jupiter"], answer: "Mars"}
+      ],
+      "Computer": [
+        {q: "HTML stands for?", options: ["Hyper Text Markup Language","HighText Machine Language","None"], answer: "Hyper Text Markup Language"},
+        {q: "JS is short for?", options: ["JavaSource","JavaScript","JellyScript"], answer: "JavaScript"}
+      ]
+    };
+
+    function startExam() {
+      const name = document.getElementById("username").value;
+      if(name.trim()===""){ alert("Enter your name!"); return; }
+      document.getElementById("loginPage").classList.add("hidden");
+      document.getElementById("examPage").classList.remove("hidden");
+
+      let form = document.getElementById("examForm");
+      let html = "";
+      for (let subject in questions) {
+        html += `<h3>${subject}</h3>`;
+        questions[subject].forEach((q,i)=>{
+          html += `<div class="question"><p>${q.q}</p>`;
+          q.options.forEach(opt=>{
+            html += `<label><input type="radio" name="${subject}_${i}" value="${opt}"> ${opt}</label><br>`;
+          });
+          html += `</div>`;
+        });
+      }
+      form.innerHTML = html;
+    }
+
+    function submitExam() {
+      let score = 0, total = 0;
+      for (let subject in questions) {
+        questions[subject].forEach((q,i)=>{
+          total++;
+          let selected = document.querySelector(`input[name="${subject}_${i}"]:checked`);
+          if(selected && selected.value === q.answer){ score++; }
+        });
+      }
+      document.getElementById("examPage").classList.add("hidden");
+      document.getElementById("resultPage").classList.remove("hidden");
+      document.getElementById("resultText").innerText = `You scored ${score} out of ${total}`;
+    }
+  </script>
+</body>
+</html>
